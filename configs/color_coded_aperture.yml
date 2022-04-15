@@ -1,0 +1,72 @@
+---
+angular_resolution: 5
+copy_config_to: models/color_coded_aperture/{config_name}/config.yml
+training:
+  optimizer: !Adam
+    learning_rate: !PiecewiseConstantDecay
+      boundaries: 
+        - 500000
+      values:
+        - 1.0e-3
+        - 1.0e-4
+    beta_2: 0.98
+    epsilon: 1.e-5 
+    clipvalue: 1.
+  callbacks:
+    - !ModelCheckpoint
+      filepath: models/color_coded_aperture/{config_name}/{epoch:02d}.ckpt
+      save_weights_only: true
+      verbose: true
+    - !ModelCheckpoint
+      filepath: models/color_coded_aperture/{config_name}/best.tf
+      save_best_only: true
+      verbose: true
+    - !Tensorboard
+      log_dir: tensorboard/color_coded_aperture/{config_name}
+  epochs: 180
+  compile: true
+model: !PixelwiseModel
+  acquisition_reconstruction: !PixelwiseAcquisitionReconstruction
+    generator: !PixelwiseMatrixGenerator
+      modulation_layers:
+        - !ColorCodedApertureModulation
+            aperture_resolution: 5
+            number_of_shots: {number_of_shots}
+        - !CFAModulation
+            mode: bayer
+    reconstructor: !PixelwiseClosedFormHQS
+      proximals: !BlocksFromResiduals
+        residuals: !ResProxes
+          count: {number_of_iterations}
+          number_of_convolutions: {number_of_convolutions}
+        delta_initial_value: {delta_initial_value}
+      mu_initial_value: 1.0
+datasets:
+  train:
+    file_descriptions:
+    - root_dir: data/training
+      format: lf_{v+1+(8-angular_resolution)//2}_{u+1+(8-angular_resolution)//2}.png
+    options:
+      batch_size: 16
+      prefetch: true
+      patch_height: 64
+      patch_width: 64
+      shuffle_before_extraction: true
+      shuffle_after_extraction: true
+      buffer_size: 2500
+      patch_stride_ratio: 2
+  dev:
+    file_descriptions:
+    - root_dir: data/validation
+      format: TM_{v+1+(7-angular_resolution)//2:02d}_{u+1+(7-angular_resolution)//2:02d}.png
+    options:
+      batch_size: 16
+      prefetch: true
+      patch_height: 64
+      patch_width: 64
+  test:
+    file_descriptions:
+    - root_dir: data/test
+      format: lf_{v+1+(8-angular_resolution)//2}_{u+1+(8-angular_resolution)//2}.png
+    options:
+      batch_size: 1
