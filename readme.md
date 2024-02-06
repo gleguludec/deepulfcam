@@ -12,6 +12,10 @@ The light field is then reconstructed by performing the 'unrolling' of an intera
 This code is designed to be compatible with Python 3.7 and Tensorflow 2.3.
 Other required dependencies are: Pillow, PyYAML.
 
+## Paper
+
+The method is presented _Deep Unrolling for Light Field Compressed Acquisition using Coded Masks (Le Guludec & Guillemot, 2022)_ published in IEEE Access and is freely accessible at [doi:10.1109/ACCESS.2022.3168362](https://doi.org/10.1109/ACCESS.2022.3168362).
+
 ## How to use
 
 The ```configs``` folder contains yaml file 'templates' for several set-ups. Those files characterize the various experiments by describing the training hyperparameters, schedule, reconstruction algorithm architecture, acquisition model and datasets used for training.
