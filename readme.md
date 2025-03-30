@@ -45,3 +45,7 @@ Each of these can contain several light fields organized into folders, one folde
 Users willing to train models with a reasonable amount of data might need to download (and possibly process and format) light fields from:
   - the Kalantari dataset: https://cseweb.ucsd.edu/~viscomp/projects/LF/papers/SIGASIA16/
   - the Stanford Lytro LF Archive dataset: http://lightfields.stanford.edu/LF2016.html
+
+A notebook `test.ipynb` showcases the reconstruction capabilities of our method (require OpenCV and Matplotlib to run).
+
+We included the trained model `random` that reconstructs a dense 5x5 LF from 1 monochromatic projection with random uniform color-coded mask placed between the aperture and the sensor, and a bayer color filter array.
